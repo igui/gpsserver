@@ -30,7 +30,7 @@ SECRET_KEY = environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = environ.get('DEBUG', 'false').lower() == 'true'
 
-ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', '').split(';')
+ALLOWED_HOSTS = [ environ.get('SERVERNAME', 'localhost') ]
 
 # Application definition
 
@@ -45,11 +45,12 @@ INSTALLED_APPS = [
 ]
 
 # Security
-CSRF_COOKIE_SECURE = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-SESSION_COOKIE_SECURE = True
-X_FRAME_OPTIONS = 'DENY'
+# CSRF_COOKIE_DOMAIN = environ.get('SERVERNAME', 'localhost')
+# CSRF_COOKIE_SECURE = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_BROWSER_XSS_FILTER = True
+# SESSION_COOKIE_SECURE = True
+# X_FRAME_OPTIONS = 'DENY'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
