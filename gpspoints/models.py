@@ -12,5 +12,6 @@ class GeoPoint(models.Model):
     latitude = models.FloatField('Latitude', validators=(MinValueValidator(-90), MaxValueValidator(90)))
     longitude = models.FloatField('Longitude', validators=(MinValueValidator(-180), MaxValueValidator(180)))
     speed = models.FloatField('Speed', validators=(MinValueValidator(0),), default=0)
+    course = models.FloatField('Course', validators=(MinValueValidator(0), MaxValueValidator(360)), default=0)
     timestamp = models.DateTimeField('GPS Timestamp')
     created_at = models.DateTimeField(auto_now=True)

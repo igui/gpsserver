@@ -35,6 +35,7 @@ def parse_data(data: bytes) -> GeoPoint:
         valid=matches.group('validity').upper() == 'A',
         latitude=latlng_to_decimal(matches.group('latitude'), matches.group('southnorth')),
         longitude=latlng_to_decimal(matches.group('longitude'), matches.group('westeast')),
+        course=float(matches.group('course')),
         speed=float(matches.group('speed')),
         timestamp=datetime.strptime(
             '{} {} +0000'.format(matches.group('date'), matches.group('timeofday')),
