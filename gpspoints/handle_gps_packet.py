@@ -27,8 +27,9 @@ def parse_data(data: bytes) -> GeoPoint:
     decoded = data.decode('utf-8')
     matches = gpsregex.match(decoded)
     if not matches:
-        print('Data does not match regex')
+        print('Data does not match regex: {}'.format(decoded))
         return
+    print('Received valid line: {}'.format(decoded))
     
     return GeoPoint(
         dataformat=int(matches.group('format')),
@@ -45,4 +46,5 @@ def parse_data(data: bytes) -> GeoPoint:
 
 def handle_gps_packet(raw_data: bytes) -> None:
     point = parse_data(raw_data)
-    point.save()
+    if(point):
+        point.save()
