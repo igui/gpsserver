@@ -21,7 +21,7 @@ def parse_data(data: bytes) -> GeoPoint:
         r'^\+CGPSINF:\s*(?P<format>\d+),(?P<timeofday>\d+\.\d+),(?P<validity>\w),' +
         r'(?P<latitude>\d+\.\d+),(?P<southnorth>\w),(?P<longitude>\d+\.\d+),' +
         r'(?P<westeast>\w),(?P<speed>\d+\.\d+),(?P<course>\d+\.\d+),(?P<date>\d{6}),' + 
-        r'(?P<variation>\d+\.\d+)?,(?P<variationwesteast>\w)?,\w$'
+        r'(?P<variation>\d+\.\d+)?,(?P<variationwesteast>\w)?,\w\s*$'
     )
 
     decoded = data.decode('utf-8')
