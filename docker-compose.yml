@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  gpsserver:
+    env_file: .env
+    image: iavas/gpsserver
+    ports:
+      - 35370:9000/udp
+      - 8000:8000
+    volumes:
+      - type: volume
+        source: gpsdb
+        target: /app/db
+        volume:
+          nocopy: true
+
+volumes:
+  gpsdb:

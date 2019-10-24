@@ -1,9 +1,11 @@
 astroid==2.3.1
 Django==2.2.6
+hexdump==3.3
 isort==4.3.21
 lazy-object-proxy==1.4.2
 mccabe==0.6.1
 meld3==2.0.0
+pycrypto==2.6.1
 pylint==2.4.2
 python-dotenv==0.10.3
 pytz==2019.3

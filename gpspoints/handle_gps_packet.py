@@ -1,6 +1,10 @@
 import re
+from base64 import b64decode
 from datetime import datetime
+from django.conf import settings
+from Crypto.Cipher import AES
 from .models import GeoPoint
+from hexdump import hexdump
 
 def latlng_to_decimal(latlng: str, cardinal_direction: str) -> float:
     latlngregex = re.compile(
@@ -21,10 +25,13 @@ def parse_data(data: bytes) -> GeoPoint:
         r'^\+CGPSINF:\s*(?P<format>\d+),(?P<timeofday>\d+\.\d+),(?P<validity>\w),' +
         r'(?P<latitude>\d+\.\d+),(?P<southnorth>\w),(?P<longitude>\d+\.\d+),' +
         r'(?P<westeast>\w),(?P<speed>\d+\.\d+),(?P<course>\d+\.\d+),(?P<date>\d{6}),' + 
-        r'(?P<variation>\d+\.\d+)?,(?P<variationwesteast>\w)?,\w\s*$'
+        r'(?P<variation>\d+\.\d+)?,(?P<variationwesteast>\w)?,\w\r\n.*$'
     )
 
-    decoded = data.decode('utf-8')
+    encryption_key = b64decode(settings.GPS_ENCRYPTION_KEY)
+    aes = AES.new(encryption_key, AES.MODE_CBC, data[:AES.block_size])
+    decrypted = aes.decrypt(data[AES.block_size:])
+    decoded = decrypted.decode('ascii', errors='ignore')
     matches = gpsregex.match(decoded)
     if not matches:
         print('Data does not match regex: {}'.format(decoded))
