@@ -3,10 +3,12 @@ version: '3.4'
 services:
   gpsserver:
     env_file: .env
+    environment: 
+      - PYTHONUNBUFFERED=1
+    command: ./manage.py rungpsserver 0.0.0.0 9000
     image: iavas/gpsserver
     ports:
       - 35370:9000/udp
-      - 8000:8000
     volumes:
       - type: volume
         source: gpsdb
