@@ -1,0 +1,11 @@
+{$SERVERNAME} {
+    proxy / gpsserver:8000 {
+        transparent
+    }
+}
+
+{$SERVERNAME}/static {
+   browse
+   gzip
+   root /static
+}

@@ -1,20 +1,33 @@
 version: '3.4'
 
 services:
+  caddy:
+    env_file: .env
+    image: abiosoft/caddy
+    ports:
+      - 35370:2015/tcp
+    volumes:
+      - type: volume
+        source: staticfiles
+        target: /static
+      - type: bind
+        source: ./Caddyfile
+        target: /etc/Caddyfile
   gpsserver:
     env_file: .env
     environment: 
       - PYTHONUNBUFFERED=1
-    command: ./manage.py rungpsserver 0.0.0.0 9000
     image: iavas/gpsserver
     ports:
       - 35370:9000/udp
     volumes:
       - type: volume
+        source: staticfiles
+        target: /app/static
+      - type: volume
         source: gpsdb
         target: /app/db
-        volume:
-          nocopy: true
 
 volumes:
   gpsdb:
+  staticfiles:
