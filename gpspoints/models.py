@@ -1,10 +1,23 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import timedelta
 
 DATA_FORMAT_CHOICES = [
     (0, 'Default (0)'),
     (32, '$GPRMC (32)'),
 ]
+
+class Trip(models.Model):
+    TRIP_END_THRESHOLD = timedelta(minutes=10)
+
+    start = models.DateTimeField('Start time')
+    end = models.DateTimeField('End time')
+
+    def __str__(self):
+        return 'Trip<{}<-->{}>'.format(
+            self.start.isoformat(),
+            self.end.isoformat()
+        )
 
 class GeoPoint(models.Model):
     dataformat = models.IntegerField('Data format', choices=DATA_FORMAT_CHOICES, default=32)
@@ -15,3 +28,22 @@ class GeoPoint(models.Model):
     course = models.FloatField('Course', validators=(MinValueValidator(0), MaxValueValidator(360)), default=0)
     timestamp = models.DateTimeField('GPS Timestamp')
     created_at = models.DateTimeField(auto_now=True)
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='points')
+
+    def update_trip(self):
+        """
+        Updates the trip of the object, and extends the trip to contain the point
+        if there is a trip within the threshold
+        """
+        try:
+            trip = Trip.objects.get(
+                start__lte = self.timestamp,
+                end__gte = self.timestamp - Trip.TRIP_END_THRESHOLD)
+
+            if trip.end < self.timestamp:
+                trip.end = self.timestamp
+                trip.save()
+        except Trip.DoesNotExist:
+            trip = Trip(start=self.timestamp, end=self.timestamp)
+
+        self.trip = trip
