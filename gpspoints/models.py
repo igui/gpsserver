@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.serializers import serialize
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import timedelta
 
@@ -12,6 +13,9 @@ class Trip(models.Model):
 
     start = models.DateTimeField('Start time')
     end = models.DateTimeField('End time')
+
+    def points_json(self):
+        return serialize('json', self.points.filter(valid=True))
 
     def __str__(self):
         return 'Trip<{}<-->{}>'.format(
@@ -29,6 +33,13 @@ class GeoPoint(models.Model):
     timestamp = models.DateTimeField('GPS Timestamp')
     created_at = models.DateTimeField(auto_now=True)
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='points')
+
+    def __str__(self):
+        if self.valid:
+            return 'GeoPoint<id={} latlng={},{}>'.format(self.id, self.latitude, 
+                self.longitude)
+        else:
+            return 'GeoPoint<id={} invalid>'.format(self.id)
 
     def update_trip(self):
         """

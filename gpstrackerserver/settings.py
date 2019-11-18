@@ -134,3 +134,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# Google Maps
+GOOGLE_MAPS_API_KEY = environ.get('GOOGLE_MAPS_API_KEY', '')
