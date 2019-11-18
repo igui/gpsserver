@@ -32,7 +32,7 @@ class GeoPoint(models.Model):
     course = models.FloatField('Course', validators=(MinValueValidator(0), MaxValueValidator(360)), default=0)
     timestamp = models.DateTimeField('GPS Timestamp')
     created_at = models.DateTimeField(auto_now=True)
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='points')
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='points', null=True)
 
     def __str__(self):
         if self.valid:
@@ -46,15 +46,13 @@ class GeoPoint(models.Model):
         Updates the trip of the object, and extends the trip to contain the point
         if there is a trip within the threshold
         """
-        try:
-            trip = Trip.objects.get(
-                start__lte = self.timestamp,
-                end__gte = self.timestamp - Trip.TRIP_END_THRESHOLD)
-
-            if trip.end < self.timestamp:
-                trip.end = self.timestamp
-                trip.save()
-        except Trip.DoesNotExist:
-            trip = Trip(start=self.timestamp, end=self.timestamp)
+        trip = Trip.objects.filter(
+            start__lte = self.timestamp,
+            end__gte = self.timestamp - Trip.TRIP_END_THRESHOLD).first()
+        if not trip: 
+            trip = Trip.objects.create(start=self.timestamp, end=self.timestamp)
+        elif trip.end < self.timestamp:
+            trip.end = self.timestamp
+            trip.save()
 
         self.trip = trip
