@@ -53,7 +53,10 @@ def parse_data(data: bytes) -> GeoPoint:
 
 def handle_gps_packet(raw_data: bytes) -> None:
     point = parse_data(raw_data)
-    if(point):
-        point.save()
+    if not point:
+        return
+    point.save()
+    if point.valid:
         point.update_trip()
-        point.trip.save()
+        point.save()
+
